@@ -1,5 +1,6 @@
 package com.example.user_api.service;
 
+import com.example.user_api.exception.NotFoundException;
 import com.example.user_api.exception.TokenGeneratorException;
 import com.example.user_api.exception.UserServiceDatabaseException;
 import com.example.user_api.model.LoginEntity;
@@ -46,7 +47,7 @@ public class UserService {
         var tokenData = jwtService.parseToken(token);
         var userId = UUID.fromString(tokenData.subject());
         return userRepository.findById(userId)
-                .orElseThrow(() -> new UserServiceDatabaseException("User not found"))
+                .orElseThrow(() -> new NotFoundException("User not found"))
                 .getId();
     }
 

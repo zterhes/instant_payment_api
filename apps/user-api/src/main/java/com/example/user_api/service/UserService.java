@@ -6,12 +6,10 @@ import com.example.user_api.model.LoginEntity;
 import com.example.user_api.model.UserEntity;
 import com.example.user_api.repository.LoginRepository;
 import com.example.user_api.repository.UserRepository;
-import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.util.UUID;
 

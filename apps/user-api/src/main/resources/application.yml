@@ -6,7 +6,10 @@ spring:
     username: ${USER_DB_USERNAME}
     password: ${USER_DB_PASSWORD}
     driver-class-name: org.postgresql.Driver
+  flyway:
+    baseline-on-migrate: true
 
 jwt:
   secret: ${JWT_SECRET}
   expiration: ${JWT_EXPIRATION}
+

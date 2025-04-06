@@ -44,4 +44,12 @@ public class UserService {
         }
     }
 
+    public UUID getUserId(String token) {
+        var tokenData = jwtService.parseToken(token);
+        var userId = UUID.fromString(tokenData.subject());
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new UserServiceDatabaseException("User not found"))
+                .getId();
+    }
+
 }

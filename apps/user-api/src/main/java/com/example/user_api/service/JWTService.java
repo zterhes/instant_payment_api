@@ -1,6 +1,8 @@
 package com.example.user_api.service;
 
+import com.example.user_api.dto.TokenData;
 import com.example.user_api.exception.TokenGeneratorException;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -41,6 +43,22 @@ public class JWTService {
 
     }
 
+    public TokenData parseToken(String token) throws TokenGeneratorException {
+        try {
+            Claims claims = Jwts.parserBuilder()
+                    .setSigningKey(getSigningKey())
+                    .build()
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            String subject = claims.getSubject();
+            Map<String, Object> allClaims = new HashMap<>(claims);
+
+            return new TokenData(subject, allClaims);
+        } catch (Exception e) {
+            throw new TokenGeneratorException("Invalid or expired token: " + e.getMessage());
+        }
+    }
 
     private Key getSigningKey() {
         return Keys.hmacShaKeyFor(secret.getBytes());

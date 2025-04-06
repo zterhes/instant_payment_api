@@ -139,6 +139,8 @@ services:
       USER_DB_URL: ${USER_DB_URL}
       USER_DB_USERNAME: ${USER_DB_USERNAME}
       USER_DB_PASSWORD: ${USER_DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_EXPIRATION: ${JWT_EXPIRATION}
     ports:
       - "8083:8080"
     depends_on:

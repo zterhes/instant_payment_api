@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS login_history (
+    id SERIAL PRIMARY KEY,
+    token VARCHAR NOT NULL,
+    date TIMESTAMP NOT NULL
+);

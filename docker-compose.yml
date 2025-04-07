@@ -14,10 +14,12 @@ services:
     volumes:
       - payment_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "payment_user", "-d", "payment_db"]
+      test: [ "CMD", "pg_isready", "-U", "payment_user", "-d", "payment_db" ]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - payment-db-network
 
   notification-db:
     image: postgres:14-alpine
@@ -31,10 +33,12 @@ services:
     volumes:
       - notification_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "notification_user", "-d", "notification_db"]
+      test: [ "CMD", "pg_isready", "-U", "notification_user", "-d", "notification_db" ]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - notification-db-network
 
   user-db:
     image: postgres:14-alpine
@@ -48,10 +52,12 @@ services:
     volumes:
       - user_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "pg_isready", "-U", "user_user", "-d", "user_db"]
+      test: [ "CMD", "pg_isready", "-U", "user_user", "-d", "user_db" ]
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - user-db-network
 
   # Kafka
   kafka:
@@ -77,7 +83,8 @@ services:
       interval: 5s
       timeout: 10s
       retries: 10
-
+    networks:
+      - kafka-network
 
   # Kafka UI
   kafka-ui:
@@ -90,6 +97,8 @@ services:
       KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
     depends_on:
       - kafka
+    networks:
+      - kafka-network
 
   # Spring Boot Applications
   payment-api:
@@ -101,6 +110,7 @@ services:
       PAYMENT_DB_URL: ${PAYMENT_DB_URL}
       PAYMENT_DB_USERNAME: ${PAYMENT_DB_USERNAME}
       PAYMENT_DB_PASSWORD: ${PAYMENT_DB_PASSWORD}
+      USER_API_URL: ${USER_API_URL}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
     ports:
       - "8081:8080"
@@ -111,6 +121,8 @@ services:
         condition: service_healthy
     networks:
       - payment-user-network
+      - payment-db-network
+      - kafka-network
 
   notification-api:
     build:
@@ -132,6 +144,9 @@ services:
         condition: service_healthy
       payment-api:
         condition: service_started
+    networks:
+      - notification-db-network
+      - kafka-network
 
   user-api:
     build:
@@ -151,6 +166,7 @@ services:
         condition: service_healthy
     networks:
       - payment-user-network
+      - user-db-network
 
 volumes:
   payment_data:
@@ -160,4 +176,12 @@ volumes:
 
 networks:
   payment-user-network:
+    driver: bridge
+  kafka-network:
+    driver: bridge
+  payment-db-network:
+    driver: bridge
+  user-db-network:
+    driver: bridge
+  notification-db-network:
     driver: bridge

@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="UserApiApplication" type="Application" factoryName="Application" nameIsGenerated="true">
+    <envs>
+      <env name="USER_DB_PASSWORD" value="user_password" />
+      <env name="USER_DB_URL" value="jdbc:postgresql://localhost:5434/user_db" />
+    </envs>
+    <option name="envFilePaths">
+      <option value="$PROJECT_DIR$/.env" />
+    </option>
+    <option name="MAIN_CLASS_NAME" value="com.example.user_api.UserApiApplication" />
+    <module name="user-api" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.example.user_api.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

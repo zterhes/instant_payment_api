@@ -28,6 +28,6 @@ public class LoginEntity {
     @Column(name = "user_id")
     private UUID userId;
 
-    @Column(name = "date")
-    private LocalDateTime date;
+    @Column(name = "created_at")
+    private LocalDateTime createdAt;
 }

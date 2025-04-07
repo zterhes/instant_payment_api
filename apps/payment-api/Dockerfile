@@ -8,7 +8,13 @@ RUN chmod +x ./mvnw
 COPY apps/payment-api/pom.xml ./apps/payment-api/
 COPY apps/notification-api/pom.xml ./apps/notification-api/
 COPY apps/user-api/pom.xml ./apps/user-api/
+COPY shared-lib/pom.xml ./shared-lib/
+COPY shared-lib/src ./shared-lib/src/
 
+# First install the shared library to local Maven repository
+RUN ./mvnw clean install -pl shared-lib -DskipTests
+
+# Then download all dependencies
 RUN ./mvnw dependency:go-offline -B
 
 COPY apps/payment-api/src ./apps/payment-api/src/

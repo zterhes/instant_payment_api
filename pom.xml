@@ -19,6 +19,7 @@
         <module>apps/payment-api</module>
         <module>apps/notification-api</module>
         <module>apps/user-api</module>
+        <module>shared-lib</module>
     </modules>
 
     <properties>

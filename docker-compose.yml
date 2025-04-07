@@ -109,6 +109,8 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+    networks:
+      - payment-user-network
 
   notification-api:
     build:
@@ -120,6 +122,7 @@ services:
       NOTIFICATION_DB_USERNAME: ${NOTIFICATION_DB_USERNAME}
       NOTIFICATION_DB_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      USER_API_URL: ${USER_API_URL}
     ports:
       - "8082:8080"
     depends_on:
@@ -146,9 +149,15 @@ services:
     depends_on:
       user-db:
         condition: service_healthy
+    networks:
+      - payment-user-network
 
 volumes:
   payment_data:
   notification_data:
   user_data:
   kafka_data:
+
+networks:
+  payment-user-network:
+    driver: bridge

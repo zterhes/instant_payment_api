@@ -31,7 +31,7 @@ public class UserService {
         try {
             var user = userRepository.saveAndFlush(UserEntity.builder().createdAt(LocalDateTime.now()).build());
             String token = jwtService.generateToken(user.getId());
-            var loginEntity = LoginEntity.builder().date(LocalDateTime.now()).userId(user.getId()).token(token).build();
+            var loginEntity = LoginEntity.builder().createdAt(LocalDateTime.now()).userId(user.getId()).token(token).build();
             loginRepository.saveAndFlush(loginEntity);
             return token;
         } catch (Exception e) {

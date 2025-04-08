@@ -2,9 +2,8 @@ package com.example.user_api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 
-import javax.sql.DataSource;
 
 @SpringBootApplication
 public class UserApiApplication {

@@ -1,8 +1,8 @@
 package com.example.payment_api.controller;
 
 import com.example.payment_api.service.AccountService;
-import com.example.payment_api.dto.CreateAccountRequest;
-import com.example.payment_api.dto.CreateAccountResponse;
+import com.example.payment_api.dto.account.CreateAccountRequest;
+import com.example.payment_api.dto.account.CreateAccountResponse;
 import com.example.shared_lib.exception.DatabaseException;
 import com.example.shared_lib.exception.EntitySaveException;
 import org.springframework.beans.factory.annotation.Autowired;

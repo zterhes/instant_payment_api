@@ -125,9 +125,6 @@ services:
       dockerfile: apps/notification-api/Dockerfile
     container_name: notification-api
     environment:
-      NOTIFICATION_DB_URL: ${NOTIFICATION_DB_URL}
-      NOTIFICATION_DB_USERNAME: ${NOTIFICATION_DB_USERNAME}
-      NOTIFICATION_DB_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       USER_API_URL: ${USER_API_URL}
     ports:
@@ -140,7 +137,6 @@ services:
       payment-api:
         condition: service_started
     networks:
-      - notification-db-network
       - kafka-network
 
   user-api:
@@ -165,7 +161,6 @@ services:
 
 volumes:
   payment_data:
-  notification_data:
   user_data:
   kafka_data:
 
@@ -177,6 +172,4 @@ networks:
   payment-db-network:
     driver: bridge
   user-db-network:
-    driver: bridge
-  notification-db-network:
     driver: bridge

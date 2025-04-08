@@ -5,6 +5,7 @@ The Instant Payment API provides a comprehensive payment solution with a modular
 My actual project is focusing on local development and deployment. On the production environment, I would use GCP Cloud Run Load Balancer, Nginx, and Cloud SQL and Terraform for infrastructure management.
 The service ports are opened to the internet, of course just for local development purposes in production environment it should be hidden behind the load balancer and Nginx.
 The user authentication is handled by a dummy JWT handled by the User API, which is not secure and should not be used in a production.
+Unfortunately, I did not have time to implement test cases for this project, but if I would do it, I would use Junit and Mockito for unit testing and MVC or Karate and Cucumber for integration testing. 
 
 ## Architecture
 
@@ -88,6 +89,6 @@ JWT_EXPIRATION=3600000
 KAFKA_TOPIC=notification
 ```
 3. Execute `docker-compose up -d` to launch the containerized services
-4. Access the API documentation at http://localhost:8080/swagger-ui/index.html
+4. Access the API documentation at `http://{host}:{port}/swagger-ui/index.html`
 5. For testing with Insomnia, use the provided insomnia.json file which is available in docs folder
 6. For running from Intellij Ideal, use the provided run configuration which is available in the root directory in the .run folder

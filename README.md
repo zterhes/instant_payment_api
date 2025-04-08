@@ -5,6 +5,7 @@ The Instant Payment API provides a comprehensive payment solution with a modular
 My actual project is focusing on local development and deployment. On the production environment, I would use GCP Cloud Run Load Balancer, Nginx, and Cloud SQL and Terraform for infrastructure management.
 The service ports are opened to the internet, of course just for local development purposes in production environment it should be hidden behind the load balancer and Nginx.
 The user authentication is handled by a dummy JWT handled by the User API, which is not secure and should not be used in a production.
+Unfortunately, I did not have time to implement test cases for this project, but if I would do it, I would use Junit and Mockito for unit testing and MVC or Karate and Cucumber for integration testing. 
 
 ## Architecture
 

@@ -23,3 +23,11 @@ spring:
 user_api:
     url: ${USER_API_URL}
     get-user: /dummy-auth/get-user
+
+springdoc:
+  api-docs:
+    path: /api-docs
+    enabled: true
+  swagger-ui:
+    path: /swagger-ui
+    enabled: true

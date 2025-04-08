@@ -1,8 +1,8 @@
 package com.example.user_api.service;
 
-import com.example.user_api.exception.NotFoundException;
+import com.example.shared_lib.exception.DatabaseException;
+import com.example.shared_lib.exception.NotFoundException;
 import com.example.user_api.exception.TokenGeneratorException;
-import com.example.user_api.exception.UserServiceDatabaseException;
 import com.example.user_api.model.LoginEntity;
 import com.example.user_api.model.UserEntity;
 import com.example.user_api.repository.LoginRepository;
@@ -27,7 +27,7 @@ public class UserService {
     private UserRepository userRepository;
 
     @Transactional
-    public String login() throws UserServiceDatabaseException, TokenGeneratorException {
+    public String login() throws DatabaseException, TokenGeneratorException {
         try {
             var user = userRepository.saveAndFlush(UserEntity.builder().createdAt(LocalDateTime.now()).build());
             String token = jwtService.generateToken(user.getId());
@@ -38,7 +38,7 @@ public class UserService {
             if (e instanceof TokenGeneratorException) {
                 throw (TokenGeneratorException) e;
             } else {
-                throw new UserServiceDatabaseException(e.getMessage());
+                throw new DatabaseException(e.getMessage());
             }
         }
     }

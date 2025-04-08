@@ -1,6 +1,6 @@
 package com.example.payment_api.service;
 
-import com.example.payment_api.dto.CreateAccountRequest;
+import com.example.payment_api.dto.account.CreateAccountRequest;
 import com.example.payment_api.model.AccountEntity;
 import com.example.payment_api.model.BalanceEntity;
 import com.example.payment_api.repository.BalanceRepository;

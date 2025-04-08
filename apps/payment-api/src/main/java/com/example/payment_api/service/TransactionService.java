@@ -32,6 +32,9 @@ public class TransactionService {
     @Autowired
     TransactionsRepository transactionsRepository;
 
+    @Autowired
+    KafkaProducerService kafkaProducerService;
+
     @Transactional
     public CreateTransactionResponse makeTransaction(String token, CreateTransactionRequest request) throws NotFoundException, DatabaseException, InsufficientBalanceException {
         try {
@@ -65,6 +68,8 @@ public class TransactionService {
                     .build();
 
             var transaction = transactionsRepository.saveAndFlush(transactionEntity);
+
+            kafkaProducerService.sendMessage(transaction.getId().toString());
 
             return new CreateTransactionResponse(transaction.getId());
         } catch (Exception e) {

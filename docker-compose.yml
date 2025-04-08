@@ -21,25 +21,6 @@ services:
     networks:
       - payment-db-network
 
-  notification-db:
-    image: postgres:14-alpine
-    container_name: notification-db
-    environment:
-      POSTGRES_DB: ${NOTIFICATION_DB_NAME}
-      POSTGRES_USER: ${NOTIFICATION_DB_USERNAME}
-      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
-    ports:
-      - "5433:5432"
-    volumes:
-      - notification_data:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "notification_user", "-d", "notification_db" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - notification-db-network
-
   user-db:
     image: postgres:14-alpine
     container_name: user-db
@@ -126,12 +107,10 @@ services:
     container_name: notification-api
     environment:
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      USER_API_URL: ${USER_API_URL}
+      PAYMENT_API_URL: ${PAYMENT_API_URL}
     ports:
       - "8082:8080"
     depends_on:
-      notification-db:
-        condition: service_healthy
       kafka:
         condition: service_healthy
       payment-api:

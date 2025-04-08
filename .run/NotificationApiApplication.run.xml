@@ -1,6 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="NotificationApiApplication" type="Application" factoryName="Application" nameIsGenerated="true">
     <envs>
+      <env name="PAYMENT_API_URL" value="http://localhost:8081" />
       <env name="SPRING_KAFKA_BOOTSTRAP_SERVERS" value="http://localhost:9092" />
     </envs>
     <option name="envFilePaths">

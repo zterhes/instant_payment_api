@@ -3,7 +3,9 @@ package com.example.payment_api.controller;
 import com.example.payment_api.dto.transaction.CreateTransactionRequest;
 import com.example.payment_api.dto.transaction.CreateTransactionResponse;
 import com.example.payment_api.exception.InsufficientBalanceException;
+import com.example.payment_api.model.TransactionEntity;
 import com.example.payment_api.service.TransactionService;
+import com.example.shared_lib.dto.GetTransactionResponse;
 import com.example.shared_lib.exception.DatabaseException;
 import com.example.shared_lib.exception.NotFoundException;
 import jakarta.validation.Valid;
@@ -27,4 +29,10 @@ public class TransactionController {
         var response = transactionService.makeTransaction(token, request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @GetMapping
+    public ResponseEntity<GetTransactionResponse> getTransaction(@RequestParam("id") String id) {
+        return ResponseEntity.ok(transactionService.getTransaction(id));
+    }
+
 }

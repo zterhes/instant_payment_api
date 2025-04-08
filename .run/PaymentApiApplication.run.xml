@@ -19,4 +19,25 @@
       <option name="Make" enabled="true" />
     </method>
   </configuration>
+  <configuration default="false" name="PaymentApiApplication" type="Application" factoryName="Application" nameIsGenerated="true">
+    <envs>
+      <env name="PAYMENT_DB_URL" value="jdbc:postgresql://localhost:5432/payment_db" />
+      <env name="SPRING_KAFKA_BOOTSTRAP_SERVERS" value="http://localhost:9092" />
+      <env name="USER_API_URL" value="http://localhost:8083" />
+    </envs>
+    <option name="envFilePaths">
+      <option value="$PROJECT_DIR$/.env" />
+    </option>
+    <option name="MAIN_CLASS_NAME" value="com.example.payment_api.PaymentApiApplication" />
+    <module name="payment-api" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="com.example.payment_api.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
 </component>

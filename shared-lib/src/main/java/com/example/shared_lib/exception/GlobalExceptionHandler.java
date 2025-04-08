@@ -17,6 +17,14 @@ import java.util.Map;
 @Log4j2
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ClientCallException.class)
+    public ResponseEntity<ErrorResponse> handleClientCallException(ClientCallException ex) {
+        log.error(ex.getMessage());
+        ErrorResponse response = new ErrorResponse(ExceptionCodes.RUNTIME_ERROR.getCode(), HttpStatus.INTERNAL_SERVER_ERROR.value(), LocalDateTime.now(), ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException ex) {
         log.error(ex.getMessage());

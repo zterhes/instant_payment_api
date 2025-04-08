@@ -21,25 +21,6 @@ services:
     networks:
       - payment-db-network
 
-  notification-db:
-    image: postgres:14-alpine
-    container_name: notification-db
-    environment:
-      POSTGRES_DB: ${NOTIFICATION_DB_NAME}
-      POSTGRES_USER: ${NOTIFICATION_DB_USERNAME}
-      POSTGRES_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
-    ports:
-      - "5433:5432"
-    volumes:
-      - notification_data:/var/lib/postgresql/data
-    healthcheck:
-      test: [ "CMD", "pg_isready", "-U", "notification_user", "-d", "notification_db" ]
-      interval: 5s
-      timeout: 5s
-      retries: 5
-    networks:
-      - notification-db-network
-
   user-db:
     image: postgres:14-alpine
     container_name: user-db
@@ -61,44 +42,39 @@ services:
 
   # Kafka
   kafka:
-    image: bitnami/kafka:3.6
+    image: confluentinc/cp-kafka:7.5.0
+    hostname: kafka
     container_name: kafka
     ports:
       - "9092:9092"
+      - "9094:9094"
     environment:
-      - KAFKA_CFG_NODE_ID=1
-      - KAFKA_CFG_PROCESS_ROLES=broker,controller
-      - KAFKA_CFG_CONTROLLER_QUORUM_VOTERS=1@kafka:9093
-      - KAFKA_CFG_LISTENERS=INTERNAL://:9092,CONTROLLER://:9093
-      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://kafka:9092
-      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
-      - KAFKA_CFG_CONTROLLER_LISTENER_NAMES=CONTROLLER
-      - KAFKA_CFG_INTER_BROKER_LISTENER_NAME=INTERNAL  # This line ensures the broker communication uses the INTERNAL listener
-      - KAFKA_KRAFT_CLUSTER_ID=${KAFKA_KRAFT_CLUSTER_ID}
-      - ALLOW_PLAINTEXT_LISTENER=yes
+      KAFKA_NODE_ID: 1
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://kafka:29092,PLAINTEXT_HOST://localhost:9092
+      KAFKA_PROCESS_ROLES: 'broker,controller'
+      KAFKA_CONTROLLER_QUORUM_VOTERS: '1@kafka:29093'
+      KAFKA_LISTENERS: PLAINTEXT://kafka:29092,CONTROLLER://kafka:29093,PLAINTEXT_HOST://0.0.0.0:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: 'CONTROLLER'
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      CLUSTER_ID: 'MkU3OEVBNTcwNTJENDM2Qk'
+      # Enable auto topic creation
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+      # Create notification topic by default
+      KAFKA_CREATE_TOPICS: 'notification:1:1'
     volumes:
-      - kafka_data:/bitnami/kafka
+      - kafka_data:/var/lib/kafka/data
+    networks:
+      - kafka-network
     healthcheck:
-      test: [ "CMD-SHELL", "kafka-topics.sh --bootstrap-server localhost:9092 --list || exit 1" ]
-      interval: 5s
+      test: [ "CMD-SHELL", "kafka-topics --bootstrap-server localhost:9092 --list" ]
+      interval: 30s
       timeout: 10s
-      retries: 10
-    networks:
-      - kafka-network
-
-  # Kafka UI
-  kafka-ui:
-    image: provectuslabs/kafka-ui:latest
-    container_name: kafka-ui
-    ports:
-      - "8080:8080"
-    environment:
-      KAFKA_CLUSTERS_0_NAME: local
-      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:29092
-    depends_on:
-      - kafka
-    networks:
-      - kafka-network
+      retries: 5
+      start_period: 30s
 
   # Spring Boot Applications
   payment-api:
@@ -111,7 +87,7 @@ services:
       PAYMENT_DB_USERNAME: ${PAYMENT_DB_USERNAME}
       PAYMENT_DB_PASSWORD: ${PAYMENT_DB_PASSWORD}
       USER_API_URL: ${USER_API_URL}
-      SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      SPRING_KAFKA_BOOTSTRAP_SERVERS: ${SPRING_KAFKA_BOOTSTRAP_SERVERS}
     ports:
       - "8081:8080"
     depends_on:
@@ -130,22 +106,16 @@ services:
       dockerfile: apps/notification-api/Dockerfile
     container_name: notification-api
     environment:
-      NOTIFICATION_DB_URL: ${NOTIFICATION_DB_URL}
-      NOTIFICATION_DB_USERNAME: ${NOTIFICATION_DB_USERNAME}
-      NOTIFICATION_DB_PASSWORD: ${NOTIFICATION_DB_PASSWORD}
       SPRING_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      USER_API_URL: ${USER_API_URL}
+      PAYMENT_API_URL: ${PAYMENT_API_URL}
     ports:
       - "8082:8080"
     depends_on:
-      notification-db:
-        condition: service_healthy
       kafka:
         condition: service_healthy
       payment-api:
         condition: service_started
     networks:
-      - notification-db-network
       - kafka-network
 
   user-api:
@@ -170,7 +140,6 @@ services:
 
 volumes:
   payment_data:
-  notification_data:
   user_data:
   kafka_data:
 
@@ -182,6 +151,4 @@ networks:
   payment-db-network:
     driver: bridge
   user-db-network:
-    driver: bridge
-  notification-db-network:
     driver: bridge

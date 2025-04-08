@@ -9,6 +9,8 @@ import com.example.payment_api.model.TransactionEntity;
 import com.example.payment_api.repository.AccountRepository;
 import com.example.payment_api.repository.TransactionsRepository;
 import com.example.payment_api.service.client.UserApiClient;
+import com.example.shared_lib.dto.Account;
+import com.example.shared_lib.dto.GetTransactionResponse;
 import com.example.shared_lib.exception.DatabaseException;
 import com.example.shared_lib.exception.NotFoundException;
 import lombok.extern.log4j.Log4j2;
@@ -31,6 +33,9 @@ public class TransactionService {
 
     @Autowired
     TransactionsRepository transactionsRepository;
+
+    @Autowired
+    KafkaProducerService kafkaProducerService;
 
     @Transactional
     public CreateTransactionResponse makeTransaction(String token, CreateTransactionRequest request) throws NotFoundException, DatabaseException, InsufficientBalanceException {
@@ -66,6 +71,8 @@ public class TransactionService {
 
             var transaction = transactionsRepository.saveAndFlush(transactionEntity);
 
+            kafkaProducerService.sendMessage(transaction.getId().toString());
+
             return new CreateTransactionResponse(transaction.getId());
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -78,4 +85,9 @@ public class TransactionService {
         }
     }
 
+    public GetTransactionResponse getTransaction(String id) {
+       var transaction = transactionsRepository.findById(Integer.parseInt(id)).orElseThrow(() -> new NotFoundException("Transaction not found"));
+       var recipient = Account.builder().ownerId(transaction.getRecipient().getOwnerId()).build();
+       return GetTransactionResponse.builder().recipient(recipient).amount(transaction.getAmount()).createdAt(transaction.getCreatedAt()).build();
+    }
 }
